@@ -5,6 +5,8 @@ import argparse
 parser = argparse.ArgumentParser(prog="pycat")
 parser.add_argument("file",nargs="*", help="The file(s) that you want to print to stdout")
 parser.add_argument("-b",action="store_true", help="Print non-blank output lines, starting at 1.")
+parser.add_argument("-e", action="store_true", help="Display non-printing characters (see the -v option), \
+                    and display a dollar sign (‘$’) at the end of each line.")
 args = parser.parse_args()
 
 
@@ -26,13 +28,31 @@ else:
             continue
 
         with open(fileName,"r") as file:
-            if args.b:
+            if args.b and args.e:
                 line_count = 1
                 for line in file:
                     if line == "\n":
                         continue
-                    print(f"{line_count:>5} {line}")
+                    # print(f"{line_count:>5} {line}$")
+                    print(f"{line_count:>6}  " + line.rstrip('\n') + '$')
                     line_count+=1
+            elif args.b:
+                line_count = 1
+                for line in file:
+                    if line == "\n":
+                        continue
+                    print(f"{line_count:>5} {line}",end="")
+                    line_count+=1
+            elif args.e:
+                for line in file:
+                    # if line.endswith('\n'):
+                    #     line.replace('\n','$')      
+                    if line == "\n" or line == " ":
+                        continue
+                    #print(f"{line} yaaaa",end="$")
+                    print(line.rstrip('\n') + '$')
+
+
             print(file.read())
 
 
